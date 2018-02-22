@@ -43,6 +43,10 @@ resource "template_dir" "manifests" {
     etcd_ca_cert     = "${base64encode(tls_self_signed_cert.etcd-ca.cert_pem)}"
     etcd_client_cert = "${base64encode(tls_locally_signed_cert.client.cert_pem)}"
     etcd_client_key  = "${base64encode(tls_private_key.client.private_key_pem)}"
+
+    oidc_issuer_url = "${var.oidc_issuer_url}"
+    oidc_client_id = "${var.oidc_client_id}"
+    oidc_username_claim = "${var.oidc_username_claim}"
   }
 }
 
