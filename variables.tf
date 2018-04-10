@@ -63,16 +63,22 @@ variable "container_images" {
   type        = "map"
 
   default = {
-    calico           = "quay.io/calico/node:v3.0.2"
-    calico_cni       = "quay.io/calico/cni:v2.0.0"
+    calico           = "quay.io/calico/node:v3.0.4"
+    calico_cni       = "quay.io/calico/cni:v2.0.1"
     flannel          = "quay.io/coreos/flannel:v0.10.0-amd64"
     flannel_cni      = "quay.io/coreos/flannel-cni:v0.3.0"
-    hyperkube        = "gcr.io/google_containers/hyperkube:v1.9.3"
-    kubedns          = "gcr.io/google_containers/k8s-dns-kube-dns-amd64:1.14.8"
-    kubedns_dnsmasq  = "gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.8"
-    kubedns_sidecar  = "gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.8"
-    pod_checkpointer = "quay.io/coreos/pod-checkpointer:3cd08279c564e95c8b42a0b97c073522d4a6b965"
+    hyperkube        = "k8s.gcr.io/hyperkube:v1.10.0"
+    kubedns          = "k8s.gcr.io/k8s-dns-kube-dns-amd64:1.14.9"
+    kubedns_dnsmasq  = "k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64:1.14.9"
+    kubedns_sidecar  = "k8s.gcr.io/k8s-dns-sidecar-amd64:1.14.9"
+    pod_checkpointer = "quay.io/coreos/pod-checkpointer:9dc83e1ab3bc36ca25c9f7c18ddef1b91d4a0558"
   }
+}
+
+variable "trusted_certs_dir" {
+  description = "Path to the directory on cluster nodes where trust TLS certs are kept"
+  type        = "string"
+  default     = "/usr/share/ca-certificates"
 }
 
 variable "ca_certificate" {
