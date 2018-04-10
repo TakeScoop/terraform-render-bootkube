@@ -38,6 +38,7 @@ resource "template_dir" "manifests" {
 
     ca_cert            = "${base64encode(var.ca_certificate == "" ? join(" ", tls_self_signed_cert.kube-ca.*.cert_pem) : var.ca_certificate)}"
     server             = "${format("https://%s:443", element(var.api_servers, 0))}"
+    apiserver_args     = "${indent(8, formatlist("- %s\n", var.apiserver_arguments))}"
     apiserver_key      = "${base64encode(tls_private_key.apiserver.private_key_pem)}"
     apiserver_cert     = "${base64encode(tls_locally_signed_cert.apiserver.cert_pem)}"
     serviceaccount_pub = "${base64encode(tls_private_key.service-account.public_key_pem)}"
@@ -46,10 +47,6 @@ resource "template_dir" "manifests" {
     etcd_ca_cert     = "${base64encode(tls_self_signed_cert.etcd-ca.cert_pem)}"
     etcd_client_cert = "${base64encode(tls_locally_signed_cert.client.cert_pem)}"
     etcd_client_key  = "${base64encode(tls_private_key.client.private_key_pem)}"
-
-    oidc_issuer_url = "${var.oidc_issuer_url}"
-    oidc_client_id = "${var.oidc_client_id}"
-    oidc_username_claim = "${var.oidc_username_claim}"
   }
 }
 

@@ -45,9 +45,7 @@ spec:
         - --storage-backend=etcd3
         - --tls-cert-file=/etc/kubernetes/secrets/apiserver.crt
         - --tls-private-key-file=/etc/kubernetes/secrets/apiserver.key
-        - --oidc-issuer-url=${oidc_issuer_url}
-        - --oidc-client-id=${oidc_client_id}
-        - --oidc-username-claim=${oidc_username_claim}
+        ${apiserver_args}
         env:
         - name: POD_IP
           valueFrom:

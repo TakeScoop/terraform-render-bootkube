@@ -99,17 +99,8 @@ variable "ca_private_key" {
   default     = ""
 }
 
-variable "oidc_issuer_url" {
-  description = "URL of the provider which allows the API server to discover public signing keys"
-  type = "string"
-}
-
-variable "oidc_client_id" {
-  description = "A client id that all tokens must be issued for"
-  type = "string"
-}
-
-variable "oidc_username_claim" {
-  description = "JWT claim to use as the user name."
-  type = "string"
+variable "apiserver_arguments" {
+  description = "List of custom arguments to pass to apiserver"
+  type        = "list"
+  default     = []
 }
