@@ -82,7 +82,7 @@ variable "trusted_certs_dir" {
 }
 
 variable "create_ca" {
-  description = "Toggles creation of a CA (when ca_certificate is omitted)"
+  description = "Toggles creation of a CA (omit ca_certificate when true)"
   default     = true
 }
 
