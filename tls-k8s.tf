@@ -13,14 +13,14 @@
 
 # Kubernetes CA (tls/{ca.crt,ca.key})
 resource "tls_private_key" "kube-ca" {
-  count = "${var.ca_certificate == "" ? 1 : 0}"
+  count = "${var.create_ca == 1 ? 1 : 0}"
 
   algorithm = "RSA"
   rsa_bits  = "2048"
 }
 
 resource "tls_self_signed_cert" "kube-ca" {
-  count = "${var.ca_certificate == "" ? 1 : 0}"
+  count = "${var.create_ca == 1 ? 1 : 0}"
 
   key_algorithm   = "${tls_private_key.kube-ca.algorithm}"
   private_key_pem = "${tls_private_key.kube-ca.private_key_pem}"
