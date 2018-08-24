@@ -81,6 +81,11 @@ variable "trusted_certs_dir" {
   default     = "/usr/share/ca-certificates"
 }
 
+variable "create_ca" {
+  description = "Toggles creation of a CA (omit ca_certificate when true)"
+  default     = true
+}
+
 variable "ca_certificate" {
   description = "Existing PEM-encoded CA certificate (generated if blank)"
   type        = "string"
