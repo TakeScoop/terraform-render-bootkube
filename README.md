@@ -1,5 +1,7 @@
 # terraform-render-bootkube
 
+**Maintainer:** [@bendrucker](https://github.com/bendrucker)
+
 `terraform-render-bootkube` is a Terraform module that renders [kubernetes-incubator/bootkube](https://github.com/kubernetes-incubator/bootkube) assets for bootstrapping a Kubernetes cluster.
 
 ## Audience
