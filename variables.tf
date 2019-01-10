@@ -25,15 +25,21 @@ variable "cloud_provider" {
 }
 
 variable "networking" {
-  description = "Choice of networking provider (flannel or calico)"
+  description = "Choice of networking provider (flannel or calico or kube-router)"
   type        = "string"
   default     = "flannel"
 }
 
 variable "network_mtu" {
-  description = "CNI interface MTU (applies to calico only)"
+  description = "CNI interface MTU (only applies to calico and kube-router)"
   type        = "string"
   default     = "1500"
+}
+
+variable "network_ip_autodetection_method" {
+  description = "Method to autodetect the host IPv4 address (only applies to calico)"
+  type        = "string"
+  default     = "first-found"
 }
 
 variable "pod_cidr" {
@@ -63,16 +69,21 @@ variable "container_images" {
   type        = "map"
 
   default = {
-    calico           = "quay.io/calico/node:v3.0.4"
-    calico_cni       = "quay.io/calico/cni:v2.0.1"
+    calico           = "quay.io/calico/node:v3.4.0"
+    calico_cni       = "quay.io/calico/cni:v3.4.0"
     flannel          = "quay.io/coreos/flannel:v0.10.0-amd64"
     flannel_cni      = "quay.io/coreos/flannel-cni:v0.3.0"
-    hyperkube        = "k8s.gcr.io/hyperkube:v1.10.0"
-    kubedns          = "k8s.gcr.io/k8s-dns-kube-dns-amd64:1.14.9"
-    kubedns_dnsmasq  = "k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64:1.14.9"
-    kubedns_sidecar  = "k8s.gcr.io/k8s-dns-sidecar-amd64:1.14.9"
-    pod_checkpointer = "quay.io/coreos/pod-checkpointer:9dc83e1ab3bc36ca25c9f7c18ddef1b91d4a0558"
+    kube_router      = "cloudnativelabs/kube-router:v0.2.3"
+    hyperkube        = "k8s.gcr.io/hyperkube:v1.13.1"
+    coredns          = "k8s.gcr.io/coredns:1.2.6"
+    pod_checkpointer = "quay.io/coreos/pod-checkpointer:83e25e5968391b9eb342042c435d1b3eeddb2be1"
   }
+}
+
+variable "enable_reporting" {
+  type        = "string"
+  description = "Enable usage or analytics reporting to upstream component owners (Tigera: Calico)"
+  default     = "false"
 }
 
 variable "trusted_certs_dir" {
@@ -108,4 +119,12 @@ variable "apiserver_arguments" {
   description = "List of custom arguments to pass to apiserver"
   type        = "list"
   default     = []
+}
+
+# unofficial, temporary, may be removed without notice
+
+variable "apiserver_port" {
+  description = "kube-apiserver port"
+  type        = "string"
+  default     = "6443"
 }

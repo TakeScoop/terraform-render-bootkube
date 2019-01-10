@@ -6,6 +6,10 @@ metadata:
 data:
   # Disable Typha for now.
   typha_service_name: "none"
+  # Calico backend to use
+  calico_backend: "bird"
+  # Calico MTU
+  veth_mtu: "${network_mtu}"
   # The CNI network configuration to install on each node.
   cni_network_config: |-
     {
@@ -17,17 +21,15 @@ data:
           "log_level": "info",
           "datastore_type": "kubernetes",
           "nodename": "__KUBERNETES_NODE_NAME__",
-          "mtu": ${network_mtu},
+          "mtu": __CNI_MTU__,
           "ipam": {
             "type": "host-local",
             "subnet": "usePodCidr"
           },
           "policy": {
-            "type": "k8s",
-            "k8s_auth_token": "__SERVICEACCOUNT_TOKEN__"
+            "type": "k8s"
           },
           "kubernetes": {
-            "k8s_api_root": "https://__KUBERNETES_SERVICE_HOST__:__KUBERNETES_SERVICE_PORT__",
             "kubeconfig": "__KUBECONFIG_FILEPATH__"
           }
         },

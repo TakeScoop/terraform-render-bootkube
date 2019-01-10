@@ -3,6 +3,8 @@ kind: Pod
 metadata:
   name: bootstrap-kube-apiserver
   namespace: kube-system
+  annotations:
+    seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
 spec:
   containers:
   - name: kube-apiserver
@@ -10,12 +12,12 @@ spec:
     command:
     - /hyperkube
     - apiserver
-    - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ValidatingAdmissionWebhook,ResourceQuota,DefaultTolerationSeconds,MutatingAdmissionWebhook
     - --advertise-address=$(POD_IP)
     - --allow-privileged=true
     - --authorization-mode=RBAC
     - --bind-address=0.0.0.0
     - --client-ca-file=/etc/kubernetes/secrets/ca.crt
+    - --enable-admission-plugins=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultTolerationSeconds,DefaultStorageClass,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,Priority
     - --etcd-cafile=/etc/kubernetes/secrets/etcd-client-ca.crt
     - --etcd-certfile=/etc/kubernetes/secrets/etcd-client.crt
     - --etcd-keyfile=/etc/kubernetes/secrets/etcd-client.key
@@ -23,12 +25,12 @@ spec:
     - --insecure-port=0
     - --kubelet-client-certificate=/etc/kubernetes/secrets/apiserver.crt
     - --kubelet-client-key=/etc/kubernetes/secrets/apiserver.key
-    - --secure-port=443
+    - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+    - --secure-port=${apiserver_port}
     - --service-account-key-file=/etc/kubernetes/secrets/service-account.pub
     - --service-cluster-ip-range=${service_cidr}
     - --cloud-provider=${cloud_provider}
     - --storage-backend=etcd3
-    - --tls-ca-file=/etc/kubernetes/secrets/ca.crt
     - --tls-cert-file=/etc/kubernetes/secrets/apiserver.crt
     - --tls-private-key-file=/etc/kubernetes/secrets/apiserver.key
     env:
@@ -43,9 +45,6 @@ spec:
     - mountPath: /etc/kubernetes/secrets
       name: secrets
       readOnly: true
-    - mountPath: /var/lock
-      name: var-lock
-      readOnly: false
   hostNetwork: true
   volumes:
   - name: secrets
@@ -54,6 +53,3 @@ spec:
   - name: ssl-certs-host
     hostPath:
       path: ${trusted_certs_dir}
-  - name: var-lock
-    hostPath:
-      path: /var/lock
