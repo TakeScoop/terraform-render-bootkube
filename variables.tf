@@ -1,94 +1,93 @@
 variable "cluster_name" {
+  type        = string
   description = "Cluster name"
-  type        = "string"
 }
 
 variable "api_servers" {
+  type        = list(string)
   description = "List of URLs used to reach kube-apiserver"
-  type        = "list"
 }
 
 variable "etcd_servers" {
+  type        = list(string)
   description = "List of URLs used to reach etcd servers."
-  type        = "list"
 }
 
 variable "asset_dir" {
-  description = "Path to a directory where generated assets should be placed (contains secrets)"
-  type        = "string"
+  type        = string
+  description = "Absolute path to a directory where generated assets should be placed (contains secrets)"
+  default     = ""
 }
 
 variable "cloud_provider" {
+  type        = string
   description = "The provider for cloud services (empty string for no provider)"
-  type        = "string"
   default     = ""
 }
 
 variable "networking" {
+  type        = string
   description = "Choice of networking provider (flannel or calico or kube-router)"
-  type        = "string"
   default     = "flannel"
 }
 
 variable "network_mtu" {
+  type        = number
   description = "CNI interface MTU (only applies to calico and kube-router)"
-  type        = "string"
-  default     = "1500"
+  default     = 1500
+}
+
+variable "network_encapsulation" {
+  type        = string
+  description = "Network encapsulation mode either ipip or vxlan (only applies to calico)"
+  default     = "ipip"
 }
 
 variable "network_ip_autodetection_method" {
+  type        = string
   description = "Method to autodetect the host IPv4 address (only applies to calico)"
-  type        = "string"
   default     = "first-found"
 }
 
 variable "pod_cidr" {
+  type        = string
   description = "CIDR IP range to assign Kubernetes pods"
-  type        = "string"
   default     = "10.2.0.0/16"
 }
 
 variable "service_cidr" {
+  type        = string
   description = <<EOD
 CIDR IP range to assign Kubernetes services.
 The 1st IP will be reserved for kube_apiserver, the 10th IP will be reserved for kube-dns.
 EOD
-
-  type    = "string"
-  default = "10.3.0.0/24"
+  default     = "10.3.0.0/24"
 }
 
-variable "cluster_domain_suffix" {
-  description = "Queries for domains with the suffix will be answered by kube-dns"
-  type        = "string"
-  default     = "cluster.local"
-}
 
 variable "container_images" {
+  type        = map(string)
   description = "Container images to use"
-  type        = "map"
 
   default = {
-    calico           = "quay.io/calico/node:v3.4.0"
-    calico_cni       = "quay.io/calico/cni:v3.4.0"
-    flannel          = "quay.io/coreos/flannel:v0.10.0-amd64"
-    flannel_cni      = "quay.io/coreos/flannel-cni:v0.3.0"
-    kube_router      = "cloudnativelabs/kube-router:v0.2.4"
-    hyperkube        = "k8s.gcr.io/hyperkube:v1.13.2"
-    coredns          = "k8s.gcr.io/coredns:1.3.0"
-    pod_checkpointer = "quay.io/coreos/pod-checkpointer:83e25e5968391b9eb342042c435d1b3eeddb2be1"
+    calico                  = "quay.io/calico/node:v3.13.1"
+    calico_cni              = "quay.io/calico/cni:v3.13.1"
+    coredns                 = "k8s.gcr.io/coredns:1.6.7"
+    flannel                 = "quay.io/coreos/flannel:v0.12.0-amd64"
+    flannel_cni             = "quay.io/coreos/flannel-cni:v0.3.0"
+    kube_apiserver          = "k8s.gcr.io/kube-apiserver:v1.18.1"
+    kube_controller_manager = "k8s.gcr.io/kube-controller-manager:v1.18.1"
+    kube_scheduler          = "k8s.gcr.io/kube-scheduler:v1.18.1"
+    kube_proxy              = "k8s.gcr.io/kube-proxy:v1.18.1"
+    # experimental
+    kube_router = "cloudnativelabs/kube-router:v0.3.2"
   }
 }
 
-variable "enable_reporting" {
-  type        = "string"
-  description = "Enable usage or analytics reporting to upstream component owners (Tigera: Calico)"
-  default     = "false"
-}
 
 variable "trusted_certs_dir" {
+  type        = string
   description = "Path to the directory on cluster nodes where trust TLS certs are kept"
-  type        = "string"
   default     = "/usr/share/ca-certificates"
 }
 
@@ -97,34 +96,41 @@ variable "create_ca" {
   default     = true
 }
 
-variable "ca_certificate" {
-  description = "Existing PEM-encoded CA certificate (generated if blank)"
-  type        = "string"
-  default     = ""
+variable "enable_reporting" {
+  type        = bool
+  description = "Enable usage or analytics reporting to upstream component owners (Tigera: Calico)"
+  default     = false
 }
 
-variable "ca_key_alg" {
-  description = "Algorithm used to generate ca_key (required if ca_cert is specified)"
-  type        = "string"
-  default     = "RSA"
-}
-
-variable "ca_private_key" {
-  description = "Existing Certificate Authority private key (required if ca_certificate is set)"
-  type        = "string"
-  default     = ""
+variable "enable_aggregation" {
+  type        = bool
+  description = "Enable the Kubernetes Aggregation Layer (defaults to false, recommended)"
+  default     = false
 }
 
 variable "apiserver_arguments" {
+  type        = list
   description = "List of custom arguments to pass to apiserver"
-  type        = "list"
   default     = []
 }
 
 # unofficial, temporary, may be removed without notice
 
-variable "apiserver_port" {
-  description = "kube-apiserver port"
-  type        = "string"
-  default     = "6443"
+variable "external_apiserver_port" {
+  type        = number
+  description = "External kube-apiserver port (e.g. 6443 to match internal kube-apiserver port)"
+  default     = 6443
 }
+
+variable "cluster_domain_suffix" {
+  type        = string
+  description = "Queries for domains with the suffix will be answered by kube-dns"
+  default     = "cluster.local"
+}
+
+variable "daemonset_tolerations" {
+  type        = list(string)
+  description = "List of additional taint keys kube-system DaemonSets should tolerate (e.g. ['custom-role', 'gpu-role'])"
+  default     = []
+}
+
