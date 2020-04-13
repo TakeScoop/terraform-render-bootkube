@@ -110,7 +110,7 @@ variable "enable_aggregation" {
 }
 
 variable "apiserver_arguments" {
-  type        = list
+  type        = list(string)
   description = "List of custom arguments to pass to apiserver"
   default     = []
 }
