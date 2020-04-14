@@ -69,3 +69,11 @@ output "etcd_peer_key" {
   value     = tls_private_key.peer.private_key_pem
   sensitive = true
 }
+
+# Some platforms may need to reconstruct the kubeconfig directly in user-data.
+# That can't be done with the way template_file interpolates multi-line
+# contents so the raw components of the kubeconfig may be needed.
+
+output "ca_cert" {
+  value = base64encode(tls_self_signed_cert.kube-ca.cert_pem)
+}
