@@ -11,6 +11,7 @@ locals {
 }
 
 # Kubernetes CA (tls/{ca.crt,ca.key})
+
 resource "tls_private_key" "kube-ca" {
   algorithm = "RSA"
   rsa_bits  = "2048"
