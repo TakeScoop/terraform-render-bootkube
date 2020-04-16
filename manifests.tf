@@ -16,7 +16,7 @@ locals {
         service_cidr            = var.service_cidr
         trusted_certs_dir       = var.trusted_certs_dir
         aggregation_flags       = var.enable_aggregation ? indent(4, local.aggregation_flags) : ""
-        apiserver_args          = indent(8, join("\n", formatlist("- %s", var.apiserver_arguments)))
+        apiserver_args          = indent(4, join("\n", formatlist("- %s", var.apiserver_arguments)))
         external_apiserver_port = var.external_apiserver_port
       }
     )
