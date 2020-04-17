@@ -64,21 +64,54 @@ rules:
       - globalbgpconfigs
       - bgpconfigurations
       - ippools
+      - ipamblocks
       - globalnetworkpolicies
       - globalnetworksets
       - networkpolicies
+      - networksets
       - clusterinformations
       - hostendpoints
+      - blockaffinities
     verbs:
       - get
       - list
       - watch
   - apiGroups: ["crd.projectcalico.org"]
     resources:
-      - felixconfigurations
       - ippools
+      - felixconfigurations
       - clusterinformations
     verbs:
       - create
       - update
-
+  # Calico may perform IPAM allocations
+  - apiGroups: ["crd.projectcalico.org"]
+    resources:
+      - blockaffinities
+      - ipamblocks
+      - ipamhandles
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+  - apiGroups: ["crd.projectcalico.org"]
+    resources:
+      - ipamconfigs
+    verbs:
+      - get
+  # Watch block affinities for route aggregation
+  - apiGroups: ["crd.projectcalico.org"]
+    resources:
+      - blockaffinities
+    verbs:
+      - watch
+  # calico-node has hardcoded kubeadm assumptions :(
+  # https://github.com/projectcalico/node/pull/417
+  # https://github.com/projectcalico/calico/pull/3211
+  - apiGroups: [""]
+    resources:
+      - configmaps
+    verbs:
+      - get

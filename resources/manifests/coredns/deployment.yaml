@@ -6,7 +6,6 @@ metadata:
   labels:
     k8s-app: coredns
     kubernetes.io/name: "CoreDNS"
-    kubernetes.io/cluster-service: "true"
 spec:
   replicas: ${control_plane_replicas}
   strategy:
@@ -41,6 +40,7 @@ spec:
                   values:
                   - coredns
               topologyKey: kubernetes.io/hostname
+      priorityClassName: system-cluster-critical
       serviceAccountName: coredns
       tolerations:
         - key: node-role.kubernetes.io/master
@@ -48,7 +48,6 @@ spec:
       containers:
         - name: coredns
           image: ${coredns_image}
-          imagePullPolicy: IfNotPresent
           resources:
             limits:
               memory: 170Mi
@@ -79,6 +78,11 @@ spec:
             timeoutSeconds: 5
             successThreshold: 1
             failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8181
+              scheme: HTTP
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
