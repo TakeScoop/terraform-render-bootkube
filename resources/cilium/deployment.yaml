@@ -16,12 +16,13 @@ spec:
     metadata:
       labels:
         name: cilium-operator
-      annotations:
-        seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
     spec:
       hostNetwork: true
       priorityClassName: system-cluster-critical
       serviceAccountName: cilium-operator
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       tolerations:
       - key: node-role.kubernetes.io/controller
         operator: Exists
@@ -69,6 +70,13 @@ spec:
         - name: config
           mountPath: /tmp/cilium/config-map
           readOnly: true
+      topologySpreadConstraints:
+        - topologyKey: kubernetes.io/hostname
+          labelSelector:
+            matchLabels:
+              name: cilium-operator
+          maxSkew: 1
+          whenUnsatisfiable: DoNotSchedule
       volumes:
       # Read configuration
       - name: config

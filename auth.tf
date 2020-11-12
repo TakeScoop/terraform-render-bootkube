@@ -44,19 +44,3 @@ data "template_file" "kubeconfig-admin" {
     server       = format("https://%s:%s", var.api_servers[0], var.external_apiserver_port)
   }
 }
-
-# Generated admin kubeconfig to bootstrap control plane
-resource "local_file" "kubeconfig-admin" {
-  count = var.asset_dir == "" ? 0 : 1
-
-  content  = data.template_file.kubeconfig-admin.rendered
-  filename = "${var.asset_dir}/auth/kubeconfig"
-}
-
-# Generated admin kubeconfig in a file named after the cluster
-resource "local_file" "kubeconfig-admin-named" {
-  count = var.asset_dir == "" ? 0 : 1
-
-  content  = data.template_file.kubeconfig-admin.rendered
-  filename = "${var.asset_dir}/auth/${var.cluster_name}-config"
-}
