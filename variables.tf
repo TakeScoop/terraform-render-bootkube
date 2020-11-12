@@ -97,6 +97,12 @@ variable "enable_aggregation" {
   default     = false
 }
 
+variable "apiserver_arguments" {
+  type        = list(string)
+  description = "List of custom arguments to pass to apiserver"
+  default     = []
+}
+
 # unofficial, temporary, may be removed without notice
 
 variable "external_apiserver_port" {
