@@ -17,12 +17,13 @@ spec:
     metadata:
       labels:
         k8s-app: flannel
-      annotations:
-        seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
     spec:
       hostNetwork: true
       priorityClassName: system-node-critical
       serviceAccountName: flannel
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       tolerations:
       - key: node-role.kubernetes.io/controller
         operator: Exists
@@ -74,6 +75,8 @@ spec:
               mountPath: /etc/kube-flannel/
             - name: run-flannel
               mountPath: /run/flannel
+            - name: xtables-lock
+              mountPath: /run/xtables.lock
       volumes:
         - name: flannel-config
           configMap:
@@ -88,3 +91,8 @@ spec:
         - name: cni-conf-dir
           hostPath:
             path: /etc/kubernetes/cni/net.d
+        # Access iptables concurrently
+        - name: xtables-lock
+          hostPath:
+            type: FileOrCreate
+            path: /run/xtables.lock
